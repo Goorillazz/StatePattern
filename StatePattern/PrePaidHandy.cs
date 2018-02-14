@@ -15,7 +15,8 @@ namespace StatePattern
             if (anrufKosten < 0)
                 throw new Exception("die Kosten für ein Anruf müssen immer positiv sein");
 
-            _currentState = new GuthabenNichtVorhandenState(SetState, anrufKosten, 0.0);            
+            var guthaben = 0.0;
+            _currentState = new GuthabenNichtVorhandenState(SetState, anrufKosten, guthaben);            
         }
 
         private void SetState(State state)
