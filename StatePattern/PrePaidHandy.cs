@@ -7,48 +7,30 @@ using System.Threading.Tasks;
 namespace StatePattern
 {
     public class PrePaidHandy
-    {
-        private double _guthaben;
-        private readonly double _anrufKosten;
-        private Guthaben _guthabenState;
+    {        
+        private State _currentState;
 
         public PrePaidHandy(double anrufKosten)
         {
-            if (_anrufKosten < 0)
+            if (anrufKosten < 0)
                 throw new Exception("die Kosten für ein Anruf müssen immer positiv sein");
 
-            _anrufKosten = anrufKosten;
-            _guthaben = 0.0;
-            _guthabenState = Guthaben.NichtVorhanden;
+            _currentState = new GuthabenNichtVorhandenState(SetState, anrufKosten, 0.0);            
+        }
+
+        private void SetState(State state)
+        {
+            _currentState = state;
         }
 
         public void GuthabenAufladen(double einzahlung)
         {
-            if (einzahlung < 0)
-                throw new Exception("Eine Einzahlung muss immer positiv sein.");
-
-            _guthaben += einzahlung;
-
-            if (_guthaben > 0)
-                _guthabenState = Guthaben.Vorhanden;
+            _currentState.GuthabenAufladen(einzahlung);
         }
 
         public bool Telefonieren()
         {
-            if (_guthaben - _anrufKosten < 0)
-                return false;
-
-            _guthaben -= _anrufKosten;
-            if (_guthaben <= 0)
-                _guthabenState = Guthaben.NichtVorhanden;
-
-            return true;
-        }
-
-        private enum Guthaben
-        {
-            Vorhanden,
-            NichtVorhanden
-        }
+            return _currentState.Telefonieren();
+        }        
     }
 }
