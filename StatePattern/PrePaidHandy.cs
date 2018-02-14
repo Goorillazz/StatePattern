@@ -10,6 +10,7 @@ namespace StatePattern
     {
         private double _guthaben;
         private readonly double _anrufKosten;
+        private Guthaben _guthabenState;
 
         public PrePaidHandy(double anrufKosten)
         {
@@ -18,6 +19,7 @@ namespace StatePattern
 
             _anrufKosten = anrufKosten;
             _guthaben = 0.0;
+            _guthabenState = Guthaben.NichtVorhanden;
         }
 
         public void GuthabenAufladen(double einzahlung)
@@ -26,6 +28,9 @@ namespace StatePattern
                 throw new Exception("Eine Einzahlung muss immer positiv sein.");
 
             _guthaben += einzahlung;
+
+            if (_guthaben > 0)
+                _guthabenState = Guthaben.Vorhanden;
         }
 
         public bool Telefonieren()
@@ -34,7 +39,16 @@ namespace StatePattern
                 return false;
 
             _guthaben -= _anrufKosten;
+            if (_guthaben <= 0)
+                _guthabenState = Guthaben.NichtVorhanden;
+
             return true;
+        }
+
+        private enum Guthaben
+        {
+            Vorhanden,
+            NichtVorhanden
         }
     }
 }
